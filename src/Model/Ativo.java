@@ -18,6 +18,13 @@ public class Ativo {
         this.endereco = endereco;
     }
 
+    public Ativo(String nome, double valor, boolean geradorDeReceita, Endereco endereco) {
+        this.nome = nome;
+        this.valor = valor;
+        this.geradorDeReceita = geradorDeReceita;
+        this.endereco = endereco;
+    }
+
     public int getId() {
         return id;
     }

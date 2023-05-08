@@ -4,14 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.SQLException;
 
 import Model.Ativo;
 import Model.Conexao;
 
 public class AtivoDAO {    
+
+    //modelo de database:
+    //id; nome; valor; geradorDeReceita; endereco_id;
 
     public static boolean inserir(Ativo ativo){
         Connection con = Conexao.newConection();
@@ -86,6 +90,32 @@ public class AtivoDAO {
         }
     }
 
+    public static Ativo buscar(int id){
+        PreparedStatement stmt;
+        Connection con = Conexao.newConection();
+        try{
+            String sql = "SELECT * FROM ativo WHERE id = ?";
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return new Ativo(
+                    rs.getInt("id"),
+                    rs.getString("nome"),
+                    rs.getDouble("valor"),
+                    rs.getBoolean("geradorDeReceita"),
+                    EnderecoDAO.buscar(rs.getInt("endereco_id")) //retorna um objeto do tipo Endereco
+                );
+            }else{
+                return null;
+            }
+        }catch(SQLException e){
+            System.out.println("Erro ao buscar ativo: " + e.getMessage());
+            return null;
+        }finally{
+            Conexao.closeConnection(con);
+        }
+    }
 
     public static List<Ativo> listar(){
         Connection con = Conexao.newConection(); 
@@ -100,8 +130,7 @@ public class AtivoDAO {
                     rs.getString("nome"),
                     rs.getDouble("valor"),
                     rs.getBoolean("geradorDeReceita"),
-                    //EnderecoDAO.buscar(rs.getInt("endereco_id")) //Criar método buscar em EnderecoDAO
-                    null
+                    EnderecoDAO.buscar(rs.getInt("endereco_id")) //retorna um objeto do tipo Endereco
                 ));
             }
             return ativos;

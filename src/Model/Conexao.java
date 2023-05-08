@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+
 import com.google.gson.*;
 
 public class Conexao {
